@@ -50,6 +50,7 @@ public class EventCache {
     }
 
     public void cacheEvents() {
+        if (mQueue.isEmpty()) return;
         List<Event> toCache = new ArrayList<>();
         mQueue.drainTo(toCache);
         mDiskCache.cache(toCache);
