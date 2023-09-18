@@ -191,6 +191,7 @@ public class DefaultDispatcher implements Dispatcher {
         public void run() {
             mRetryCounter = 0;
             while (mRunning) {
+                mEventCache.cacheEvents();
                 try {
                     long sleepTime = mDispatchInterval;
                     if (mRetryCounter > 1) sleepTime += Math.min(mRetryCounter * mDispatchInterval, 5 * mDispatchInterval);
@@ -198,7 +199,6 @@ public class DefaultDispatcher implements Dispatcher {
                     // Either we wait the interval or forceDispatch() granted us one free pass
                     mSleepToken.tryAcquire(sleepTime, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {Timber.tag(TAG).e(e); }
-                mEventCache.cacheEvents();
                 if (mEventCache.updateState(isOnline())) {
                     int count = 0;
                     List<Event> drainedEvents = new ArrayList<>();
