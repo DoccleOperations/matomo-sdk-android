@@ -46,12 +46,14 @@ public class EventCache {
             }
             Timber.tag(TAG).d("Switched state to ONLINE, uncached %d events from disk.", uncache.size());
         }
-        if (!mQueue.isEmpty()) {
-            List<Event> toCache = new ArrayList<>();
-            mQueue.drainTo(toCache);
-            mDiskCache.cache(toCache);
-        }
         return online && !mQueue.isEmpty();
+    }
+
+    public void cacheEvents() {
+        List<Event> toCache = new ArrayList<>();
+        mQueue.drainTo(toCache);
+        mDiskCache.cache(toCache);
+        Timber.tag(TAG).d("Caching %d events to disk.", toCache.size());
     }
 
     public void requeue(List<Event> events) {

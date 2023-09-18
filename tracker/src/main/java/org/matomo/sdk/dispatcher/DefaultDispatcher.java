@@ -198,6 +198,7 @@ public class DefaultDispatcher implements Dispatcher {
                     // Either we wait the interval or forceDispatch() granted us one free pass
                     mSleepToken.tryAcquire(sleepTime, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {Timber.tag(TAG).e(e); }
+                mEventCache.cacheEvents();
                 if (mEventCache.updateState(isOnline())) {
                     int count = 0;
                     List<Event> drainedEvents = new ArrayList<>();
