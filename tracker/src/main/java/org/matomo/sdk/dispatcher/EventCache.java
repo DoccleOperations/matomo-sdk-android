@@ -37,11 +37,6 @@ public class EventCache {
     }
 
     public boolean updateState(boolean online) {
-        if (!mQueue.isEmpty()) {
-            List<Event> toCache = new ArrayList<>();
-            mQueue.drainTo(toCache);
-            mDiskCache.cache(toCache);
-        }
         if (online) {
             final List<Event> uncache = mDiskCache.uncache();
             ListIterator<Event> it = uncache.listIterator(uncache.size());
@@ -50,6 +45,11 @@ public class EventCache {
                 mQueue.offerFirst(it.previous());
             }
             Timber.tag(TAG).d("Switched state to ONLINE, uncached %d events from disk.", uncache.size());
+        }
+        if (!mQueue.isEmpty()) {
+            List<Event> toCache = new ArrayList<>();
+            mQueue.drainTo(toCache);
+            mDiskCache.cache(toCache);
         }
         return online && !mQueue.isEmpty();
     }
