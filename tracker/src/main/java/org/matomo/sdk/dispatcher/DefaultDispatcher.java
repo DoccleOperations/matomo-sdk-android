@@ -119,7 +119,6 @@ public class DefaultDispatcher implements Dispatcher {
 
     private boolean launch() {
         synchronized (mThreadControl) {
-            //mEventCache.cacheEvents();
             if (!mRunning) {
                 mRunning = true;
                 Thread thread = new Thread(mLoop);
@@ -184,6 +183,7 @@ public class DefaultDispatcher implements Dispatcher {
     @Override
     public void submit(TrackMe trackMe) {
         mEventCache.add(new Event(trackMe.toMap()));
+        mEventCache.cacheEvents();
         if (mDispatchInterval != -1) launch();
     }
 
@@ -191,7 +191,6 @@ public class DefaultDispatcher implements Dispatcher {
         @Override
         public void run() {
             mRetryCounter = 0;
-            mEventCache.cacheEvents();
             while (mRunning) {
                 try {
                     long sleepTime = mDispatchInterval;
