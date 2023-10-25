@@ -119,6 +119,7 @@ public class DefaultDispatcher implements Dispatcher {
 
     private boolean launch() {
         synchronized (mThreadControl) {
+            //mEventCache.cacheEvents();
             if (!mRunning) {
                 mRunning = true;
                 Thread thread = new Thread(mLoop);
@@ -190,8 +191,8 @@ public class DefaultDispatcher implements Dispatcher {
         @Override
         public void run() {
             mRetryCounter = 0;
+            mEventCache.cacheEvents();
             while (mRunning) {
-                mEventCache.cacheEvents();
                 try {
                     long sleepTime = mDispatchInterval;
                     if (mRetryCounter > 1) sleepTime += Math.min(mRetryCounter * mDispatchInterval, 5 * mDispatchInterval);
