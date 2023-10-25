@@ -1,11 +1,14 @@
 buildscript {
+    ext.kotlin_version = '1.9.10'
     repositories {
         google()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.5'
+        classpath 'com.android.tools.build:gradle:8.1.2'
+        classpath "com.mxalbert.gradle:jacoco-android:0.2.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -13,11 +16,11 @@ allprojects {
     repositories {
         google()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://jitpack.io' }
     }
     ext {
         globalMinSdkVersion = 19
         globalTargetSdkVersion = 33
         globalCompileSdkVersion = 33
-        timberVersion = '5.0.1'
     }
 }

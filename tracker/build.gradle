@@ -1,11 +1,14 @@
-apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'maven-publish'
+    id "com.mxalbert.gradle.jacoco-android"
+}
 
 android {
-    compileSdkVersion project.ext.globalCompileSdkVersion
-
     defaultConfig {
         minSdkVersion project.ext.globalMinSdkVersion
+        compileSdk project.ext.globalCompileSdkVersion
         targetSdkVersion project.ext.globalTargetSdkVersion
     }
 
@@ -15,14 +18,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
     testOptions.unitTests.includeAndroidResources = true
     namespace 'org.matomo.sdk'
 }
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.7.0'
-    implementation "com.jakewharton.timber:timber:${timberVersion}"
+    implementation "com.github.AppDevNext.Logcat:LogcatCoreLib:3.2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 
     testImplementation 'org.awaitility:awaitility:4.2.0'
     testImplementation 'androidx.test:core:1.5.0'
@@ -32,21 +42,16 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-library:2.2'
     testImplementation 'org.hamcrest:hamcrest-integration:1.3'
 
-    testImplementation 'com.squareup.okhttp3:mockwebserver:4.11.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 
     // Mocktio
-    testImplementation 'org.mockito:mockito-core:5.5.0'
-    testImplementation 'org.json:json:20230227'
-    testImplementation 'org.robolectric:robolectric:4.9.2'
+    testImplementation 'org.mockito:mockito-core:5.6.0'
+    testImplementation 'org.json:json:20231013'
+    testImplementation 'org.robolectric:robolectric:4.10.3'
 }
 
-/**
- * Coverage
- */
-apply plugin: 'com.dicedmelon.gradle.jacoco-android'
-
 jacoco {
-    toolVersion = '0.8.5'
+    toolVersion = '0.8.10'
 }
 
 tasks.withType(Test) {
@@ -77,28 +82,11 @@ android.libraryVariants.all { variant ->
     }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
+publishing {
+    publications {
+        release(MavenPublication) {
+            afterEvaluate {
                 from components.release
-
-                groupId = 'org.matomo.sdk'
-                artifactId = 'tracker'
-                version = getTag()
-
-                pom {
-                    name = 'Matomo SDK for Android'
-                    description = 'SDK for Android to measure your apps with Matomo'
-                    url = 'https://github.com/matomo-org/matomo-sdk-android'
-
-                    licenses {
-                        license {
-                            name = 'BSD-3 Clause'
-                            url = 'https://github.com/matomo-org/matomo-sdk-android/blob/master/LICENSE'
-                        }
-                    }
-                }
             }
         }
     }
